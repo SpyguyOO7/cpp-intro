@@ -1,4 +1,124 @@
 #include <iostream>
+#include <vector>
+#include <cmath>
+
+
+
+class Point
+{
+public:
+  Point (double a, double b){
+    x = a;
+    y = b;
+  }
+  double x;
+  double y;
+  double distance_to_origin(){
+    double distance = sqrt(pow(x,2)+pow(y,2));
+    return distance;
+  }
+  double distance_to_point(Point b){
+    double xDiff = abs(x - b.x);
+    double yDiff = abs(y - b.y);
+    Point diff(xDiff,yDiff);
+    return diff.distance_to_origin();
+  }
+};
+class Triangle
+{
+public:
+  Point p1;
+  Point p2;
+  Point p3;
+  Triangle(Point p1, Point p2,Point p3) : p1(p1), p2(p2), p3(p3){};
+  double area(){
+
+    double a = p1.distance_to_point(p2);
+    double b = p2.distance_to_point(p3);
+    double c = p3.distance_to_point(p1);
+    double s = (a + b + c)/2;
+
+    return sqrt(s*(s-a)*(s-b)*(s-c));
+  }
+
+
+
+};
+class Line
+{
+public:
+  double slope;
+  Line(Point p1, Point p2) : p1(p1), p2(p2){};
+  
+  double length(){
+    return p1.distance_to_point(p2);
+  }
+  double distance_to_point(Point C){
+    double slope = ((double)p1.y - (double)p2.y)/((double)p1.x - (double)p2.x);
+    double a = 1;
+    double b = a/slope*-1;
+    double c = p1.y - slope*p1.x;
+
+    double distance = abs(a*C.x+b*C.y+c)/ sqrt(pow(a,2)+pow(b,2));
+    //Point transP1(cos(angle)*xDist,sin(angle)*yDist);
+    //Point transP(cos(angle)*xDist,sin(angle)*yDist);
+
+    
+    return(distance);
+  }
+
+
+  Point p1;
+  Point p2;
+};
+
+class Polygon
+{
+public:
+  //std::vector<Point> points;
+
+//public:
+  std::vector<Point> points;
+  double area(){
+    //std::vector<Triangle> triangles;
+    double area = 0;
+    for (int i = 2; i < points.size(); i++){
+      Triangle triangleTemp(points[0],points[i-1],points[i]);
+      //triangles.push_back(triangleTemp);
+      area = triangleTemp.area()+area;
+    }
+    return (area);
+  }
+
+    double perimeter(){
+      double perimeter = 0;
+      for (int i = 1; i < points.size(); i++){
+        Line lineTemp(points[i-1],points[i]);
+      //triangles.push_back(triangleTemp);
+        perimeter = lineTemp.length()+perimeter;
+      }
+      Line lineTemp(points[0],points[points.size()]);
+      perimeter = lineTemp.length()+perimeter;
+      return (perimeter);
+    }
+    
+  
+
+
+};
+class Circle
+{
+public:
+  int radius;
+  Circle(int r){
+    radius = r;
+  }
+  
+  double area(){
+    return (pow(radius,2)*M_PI);
+  }
+
+}; 
 
 int add(int x, int y){
   return x + y;
@@ -38,5 +158,25 @@ int main()
 
   //int ok = 1;
 
+  Circle circleObj(5);
+  std::cout << "The cirlce of radius " << circleObj.radius << " has an area of  " << circleObj.area() << std::endl;
+
+  Point pointA(3,4);
+  Point pointB(-5,-4);
+  Point pointC(-4,60);
+  std::cout << "The Point A with (" << pointA.x << ", " << pointA.y <<") has a distance form the origion of "<< pointA.distance_to_origin() << std::endl;
+  std::cout << "The Point B with (" << pointB.x << ", " << pointB.y <<") has a distance form the origion of "<< pointB.distance_to_origin() << std::endl;
+  //std::cout << "The Point A and Point B have a distance between them of (" << pointA.distance_to_point(pointB) << std::endl;
+  Line lineA(pointA,pointB);
+  std::cout << "The LineA made up of pointA and pointB has a length of " << lineA.length() << std::endl;
+  std::cout << "The Point C with (" << pointC.x << ", " << pointC.y <<") has a distance form the origion of "<< pointC.distance_to_origin() << std::endl;
+  std::cout << "The LineA is  " << lineA.distance_to_point(pointC) << " from point C"<<std::endl;
+  Triangle triangleA(pointA,pointB,pointC);
+  std::cout << "The Triangle has verticies Point A, B, and C, and an area of " << triangleA.area() << " or using heights (verify distance to line is working, valuse should be same)"<< lineA.distance_to_point(pointC) * lineA.length() * .5<<std::endl;
+  Polygon polygonA;
+  polygonA.points.push_back(pointA);
+  polygonA.points.push_back(pointB);
+  polygonA.points.push_back(pointC);
+  std::cout << "The polygon has verticies Point A, B, and C, and an area of " << polygonA.area() <<", and a perimeter of " << polygonA.perimeter() <<std::endl;
   return 0;
 }
